@@ -31,7 +31,7 @@ function() {
 #* @param file The uploaded Excel file
 #* @post /clean_email_data
 #* @serializer contentType list(type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-function(startDate, endDate, file){
+function(startDate, endDate, file) {
   req_file <- file$datapath
   data <- read_excel(req_file)
   
@@ -52,7 +52,7 @@ function(startDate, endDate, file){
              `Invite 1 Date` %in% multiple_dates |
              `Invite 2 Date` %in% multiple_dates |
              `Invite 3 Date` %in% multiple_dates) %>%
-    arrange(if_else(`Invite 2 Date` >= user_start_date & `Invite 2 Date` <= user_end_date, 
+    arrange(if_else(`Invite 2 Date` >= user_start_date & `Invite 2 Date` <= user_end_date,
                     `Invite 2 Date`, `Invite 1 Date`))
   
   date_cols <- c("Standalone Email Date", "Invite 1 Date", "Invite 2 Date", "Invite 3 Date")
@@ -66,3 +66,7 @@ function(startDate, endDate, file){
   
   readBin(tmp_file, "raw", n = file.info(tmp_file)$size)
 }
+
+#* Run plumber API on Render
+pr() %>%
+  pr_run(host = "0.0.0.0", port = as.integer(Sys.getenv("PORT", unset = 8000)))
